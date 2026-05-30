@@ -1,0 +1,2 @@
+// File: src/components/layout/index.ts
+export {};
