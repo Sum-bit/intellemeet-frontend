@@ -1,6 +1,8 @@
-// File: src/hooks/useSocket.ts
-
-import { useCallback, useEffect } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState
+} from "react";
 
 import socket, {
   connectSocket,
@@ -134,8 +136,28 @@ interface UseSocketOptions {
 export function useSocket(
   options?: UseSocketOptions
 ) {
+  const [
+    socketId,
+    setSocketId
+  ] = useState("");
+
   useEffect(() => {
     connectSocket();
+
+    const handleConnect = () => {
+      setSocketId(
+        socket.id ?? ""
+      );
+    };
+
+    socket.on(
+      "connect",
+      handleConnect
+    );
+
+    if (socket.connected) {
+      handleConnect();
+    }
 
     if (options?.onUserJoined) {
       socket.on(
@@ -236,7 +258,48 @@ export function useSocket(
     }
 
     return () => {
-      socket.removeAllListeners();
+      socket.off(
+        "connect",
+        handleConnect
+      );
+
+      socket.removeAllListeners(
+        "user-joined"
+      );
+      socket.removeAllListeners(
+        "user-left"
+      );
+      socket.removeAllListeners(
+        "participants-list"
+      );
+      socket.removeAllListeners(
+        "receive-message"
+      );
+      socket.removeAllListeners(
+        "messages-history"
+      );
+      socket.removeAllListeners(
+        "user-typing"
+      );
+      socket.removeAllListeners(
+        "user-stop-typing"
+      );
+      socket.removeAllListeners(
+        "user-mute-changed"
+      );
+      socket.removeAllListeners(
+        "user-video-changed"
+      );
+      socket.removeAllListeners(
+        "webrtc-offer"
+      );
+      socket.removeAllListeners(
+        "webrtc-answer"
+      );
+      socket.removeAllListeners(
+        "ice-candidate"
+      );
+
       disconnectSocket();
     };
   }, [options]);
@@ -287,9 +350,7 @@ export function useSocket(
       ) => {
         socket.emit(
           "get-messages",
-          {
-            meetingId
-          }
+          { meetingId }
         );
       },
       []
@@ -388,17 +449,22 @@ export function useSocket(
 
   return {
     socket,
+    socketId,
     isConnected:
       socket.connected,
 
     joinMeeting,
     leaveMeeting,
+
     sendMessage,
     getMessages,
+
     startTyping,
     stopTyping,
+
     toggleMute,
     toggleVideo,
+
     sendOffer,
     sendAnswer,
     sendIceCandidate
