@@ -132,3 +132,14 @@ export interface MeetingSummaryEvent {
     assigneeId?: string;
   }[];
 }
+
+export interface MediaDeviceOption {
+  deviceId: string;
+  label: string;
+}
+
+export interface MeetingLobbyDeviceState {
+  audioInputId: string;
+  audioOutputId: string;
+  videoInputId: string;
+}
