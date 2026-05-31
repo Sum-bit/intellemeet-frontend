@@ -31,13 +31,3 @@ export interface UpdateTaskResponse {
   success: true;
   task: Pick<Task, "id" | "status">;
 }
-
-export interface MeetingActionItem {
-  title: string;
-  assigneeId: string;
-}
-
-export interface MeetingSummaryEvent {
-  summary: string;
-  actionItems: MeetingActionItem[];
-}

@@ -1,16 +1,13 @@
-// File: src/store/uiStore.ts
-
-// File: src/store/uiStore.ts
-// Place this file in src/store/
-
 import { create } from "zustand";
 
 export type ActiveModal =
   | "create-meeting"
+  | "join-meeting"
   | "meeting-settings"
   | "invite-users"
-  | "task-details"
+  | "notification-center"
   | "profile"
+  | "change-password"
   | null;
 
 interface UIState {
@@ -23,10 +20,19 @@ interface UIState {
   closeSidebar: () => void;
   toggleSidebar: () => void;
 
-  openModal: (modal: Exclude<ActiveModal, null>) => void;
+  openModal: (
+    modal: Exclude<
+      ActiveModal,
+      null
+    >
+  ) => void;
+
   closeModal: () => void;
 
-  showToast: (message: string) => void;
+  showToast: (
+    message: string
+  ) => void;
+
   clearToast: () => void;
 
   resetUI: () => void;
@@ -39,48 +45,54 @@ const initialState = {
   toastMessage: null
 };
 
-export const useUIStore = create<UIState>((set) => ({
-  ...initialState,
+export const useUIStore =
+  create<UIState>((set) => ({
+    ...initialState,
 
-  openSidebar: () =>
-    set({
-      isSidebarOpen: true
-    }),
+    openSidebar: () =>
+      set({
+        isSidebarOpen: true
+      }),
 
-  closeSidebar: () =>
-    set({
-      isSidebarOpen: false
-    }),
+    closeSidebar: () =>
+      set({
+        isSidebarOpen: false
+      }),
 
-  toggleSidebar: () =>
-    set((state) => ({
-      isSidebarOpen: !state.isSidebarOpen
-    })),
+    toggleSidebar: () =>
+      set((state) => ({
+        isSidebarOpen:
+          !state.isSidebarOpen
+      })),
 
-  openModal: (modal) =>
-    set({
-      isModalOpen: true,
-      activeModal: modal
-    }),
+    openModal: (
+      activeModal
+    ) =>
+      set({
+        activeModal,
+        isModalOpen: true
+      }),
 
-  closeModal: () =>
-    set({
-      isModalOpen: false,
-      activeModal: null
-    }),
+    closeModal: () =>
+      set({
+        activeModal: null,
+        isModalOpen: false
+      }),
 
-  showToast: (message) =>
-    set({
-      toastMessage: message
-    }),
+    showToast: (
+      toastMessage
+    ) =>
+      set({
+        toastMessage
+      }),
 
-  clearToast: () =>
-    set({
-      toastMessage: null
-    }),
+    clearToast: () =>
+      set({
+        toastMessage: null
+      }),
 
-  resetUI: () =>
-    set({
-      ...initialState
-    })
-}));
+    resetUI: () =>
+      set({
+        ...initialState
+      })
+  }));

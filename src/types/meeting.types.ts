@@ -1,57 +1,86 @@
-// File: src/types/meeting.types.ts
-
-import type { MeetingActionItem } from "./task.types";
-
 export type MeetingStatus =
-  | "scheduled"
-  | "completed";
+  | "waiting"
+  | "active"
+  | "ended";
+
+export interface IceServer {
+  urls: string | string[];
+  username?: string;
+  credential?: string;
+}
+
+export interface MeetingHost {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string | null;
+}
+
+export interface MeetingParticipant {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string | null;
+}
 
 export interface Meeting {
   id: string;
   title: string;
-  hostId: string;
-  scheduledAt: string;
+  description: string;
+  meetingCode: string;
   status: MeetingStatus;
+  host: MeetingHost;
+  participants: MeetingParticipant[];
+  isRecording: boolean;
+  maxParticipants: number;
+  startTime: string;
+  endTime?: string;
+  duration?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-export interface MeetingListItem {
-  id: string;
-  title: string;
-  scheduledAt: string;
-  status: MeetingStatus;
-  participantCount: number;
+export interface MeetingListResponse {
+  success: boolean;
+  count: number;
+  meetings: Meeting[];
 }
 
-export interface MeetingDetails {
-  id: string;
-  title: string;
-  hostId: string;
-  participants: string[];
-  transcript: string;
-  summary: string;
-  actionItems: MeetingActionItem[];
-  recording: string;
+export interface MeetingResponse {
+  success: boolean;
+  meeting: Meeting;
 }
 
 export interface CreateMeetingRequest {
   title: string;
-  scheduledAt: string;
-  participants: string[];
+  description: string;
+  maxParticipants: number;
 }
 
 export interface CreateMeetingResponse {
-  success: true;
+  success: boolean;
   meeting: Meeting;
+  iceServers: IceServer[];
 }
 
-export interface GetMeetingsResponse {
-  success: true;
-  meetings: MeetingListItem[];
+export interface JoinMeetingRequest {
+  meetingCode: string;
 }
 
-export interface GetMeetingResponse {
-  success: true;
-  meeting: MeetingDetails;
+export interface JoinMeetingResponse {
+  success: boolean;
+  meeting: Meeting;
+  iceServers: IceServer[];
+}
+
+export interface EndMeetingResponse {
+  success: boolean;
+  duration: number;
+}
+
+export interface DeleteMeetingResponse {
+  success: boolean;
+  message: string;
 }
 
 export interface JoinMeetingEvent {
@@ -70,9 +99,11 @@ export interface SendMessageEvent {
   userId: string;
 }
 
-export interface NewMessageEvent {
-  message: string;
+export interface ReceiveMessageEvent {
+  id: string;
+  meetingId: string;
   userId: string;
+  message: string;
   timestamp: string;
 }
 
@@ -90,4 +121,12 @@ export interface ToggleVideoEvent {
 
 export interface TranscriptUpdateEvent {
   text: string;
+}
+
+export interface MeetingSummaryEvent {
+  summary: string;
+  actionItems: {
+    title: string;
+    assigneeId?: string;
+  }[];
 }

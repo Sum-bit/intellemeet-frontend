@@ -5,6 +5,11 @@ export interface AuthUser {
   name: string;
   email: string;
   role: string;
+  avatar: string | null;
+}
+
+export interface AuthenticatedUser extends AuthUser {
+  createdAt: string;
 }
 
 export interface RegisterRequest {
@@ -18,27 +23,30 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface RegisterResponse {
-  success: true;
-  message: string;
-  accessToken: string;
-  user: AuthUser;
+export interface RefreshTokenRequest {
+  refreshToken: string;
 }
 
-export interface LoginResponse {
-  success: true;
-  message: string;
+export interface AuthResponse {
+  success: boolean;
   accessToken: string;
+  refreshToken: string;
   user: AuthUser;
 }
 
 export interface RefreshTokenResponse {
-  success: true;
+  success: boolean;
   accessToken: string;
+  refreshToken: string;
+}
+
+export interface MeResponse {
+  success: boolean;
+  user: AuthenticatedUser;
 }
 
 export interface LogoutResponse {
-  success: true;
+  success: boolean;
   message: string;
 }
 
@@ -46,10 +54,3 @@ export interface ApiErrorResponse {
   success: false;
   message: string;
 }
-
-export type AuthApiResponse =
-  | RegisterResponse
-  | LoginResponse
-  | RefreshTokenResponse
-  | LogoutResponse
-  | ApiErrorResponse;

@@ -1,54 +1,103 @@
-// File: src/hooks/useMeeting.ts
-
 import { create } from "zustand";
 
 import type { AuthUser } from "@/types/auth.types";
 
+interface LoginPayload {
+  user: AuthUser;
+  accessToken: string;
+  refreshToken: string;
+}
+
 interface AuthState {
   user: AuthUser | null;
   accessToken: string | null;
+  refreshToken: string | null;
   isAuthenticated: boolean;
 
-  login: (payload: {
-    user: AuthUser;
-    accessToken: string;
-  }) => void;
+  login: (payload: LoginPayload) => void;
 
   logout: () => void;
 
-  setToken: (token: string | null) => void;
+  setAccessToken: (
+    accessToken: string | null
+  ) => void;
 
-  setUser: (user: AuthUser | null) => void;
+  setRefreshToken: (
+    refreshToken: string | null
+  ) => void;
+
+  setTokens: (
+    accessToken: string,
+    refreshToken: string
+  ) => void;
+
+  setUser: (
+    user: AuthUser | null
+  ) => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+const initialState = {
   user: null,
   accessToken: null,
-  isAuthenticated: false,
+  refreshToken: null,
+  isAuthenticated: false
+};
 
-  login: ({ user, accessToken }) =>
-    set({
+export const useAuthStore =
+  create<AuthState>((set) => ({
+    ...initialState,
+
+    login: ({
       user,
       accessToken,
-      isAuthenticated: true
-    }),
+      refreshToken
+    }) =>
+      set({
+        user,
+        accessToken,
+        refreshToken,
+        isAuthenticated: true
+      }),
 
-  logout: () =>
-    set({
-      user: null,
-      accessToken: null,
-      isAuthenticated: false
-    }),
+    logout: () =>
+      set({
+        ...initialState
+      }),
 
-  setToken: (token) =>
-    set((state) => ({
-      accessToken: token,
-      isAuthenticated: Boolean(token && state.user)
-    })),
+    setAccessToken: (
+      accessToken
+    ) =>
+      set((state) => ({
+        accessToken,
+        isAuthenticated:
+          Boolean(accessToken) &&
+          Boolean(state.user)
+      })),
 
-  setUser: (user) =>
-    set((state) => ({
-      user,
-      isAuthenticated: Boolean(user && state.accessToken)
-    }))
-}));
+    setRefreshToken: (
+      refreshToken
+    ) =>
+      set({
+        refreshToken
+      }),
+
+    setTokens: (
+      accessToken,
+      refreshToken
+    ) =>
+      set((state) => ({
+        accessToken,
+        refreshToken,
+        isAuthenticated:
+          Boolean(accessToken) &&
+          Boolean(state.user)
+      })),
+
+    setUser: (user) =>
+      set((state) => ({
+        user,
+        isAuthenticated:
+          Boolean(user) &&
+          Boolean(state.accessToken)
+      }))
+  }));

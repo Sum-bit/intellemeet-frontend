@@ -3,32 +3,29 @@
 import { create } from "zustand";
 
 import type {
-  MeetingListItem,
-  NewMessageEvent
+  Meeting,
+  MeetingParticipant
 } from "@/types/meeting.types";
-
-interface MeetingParticipant {
-  userId: string;
-  name: string;
-}
+import type { Message } from "@/types/message.types";
 
 interface MeetingState {
   meetingId: string | null;
+  activeMeeting: Meeting | null;
 
   participants: MeetingParticipant[];
 
-  messages: NewMessageEvent[];
-
-  activeMeeting: MeetingListItem | null;
+  messages: Message[];
 
   isMuted: boolean;
   isVideoOn: boolean;
   isScreenSharing: boolean;
 
-  setMeetingId: (meetingId: string | null) => void;
+  setMeetingId: (
+    meetingId: string | null
+  ) => void;
 
   setActiveMeeting: (
-    meeting: MeetingListItem | null
+    meeting: Meeting | null
   ) => void;
 
   setParticipants: (
@@ -39,20 +36,30 @@ interface MeetingState {
     participant: MeetingParticipant
   ) => void;
 
-  removeParticipant: (userId: string) => void;
+  removeParticipant: (
+    participantId: string
+  ) => void;
+
+  setMessages: (
+    messages: Message[]
+  ) => void;
 
   addMessage: (
-    message: NewMessageEvent
+    message: Message
   ) => void;
 
   clearMessages: () => void;
 
-  setMuted: (muted: boolean) => void;
+  setMuted: (
+    isMuted: boolean
+  ) => void;
 
-  setVideoOn: (videoOn: boolean) => void;
+  setVideoOn: (
+    isVideoOn: boolean
+  ) => void;
 
   setScreenSharing: (
-    screenSharing: boolean
+    isScreenSharing: boolean
   ) => void;
 
   resetMeetingState: () => void;
@@ -60,9 +67,9 @@ interface MeetingState {
 
 const initialState = {
   meetingId: null,
+  activeMeeting: null,
   participants: [],
   messages: [],
-  activeMeeting: null,
   isMuted: false,
   isVideoOn: true,
   isScreenSharing: false
@@ -72,28 +79,37 @@ export const useMeetingStore =
   create<MeetingState>((set) => ({
     ...initialState,
 
-    setMeetingId: (meetingId) =>
+    setMeetingId: (
+      meetingId
+    ) =>
       set({
         meetingId
       }),
 
-    setActiveMeeting: (activeMeeting) =>
+    setActiveMeeting: (
+      activeMeeting
+    ) =>
       set({
         activeMeeting
       }),
 
-    setParticipants: (participants) =>
+    setParticipants: (
+      participants
+    ) =>
       set({
         participants
       }),
 
-    addParticipant: (participant) =>
+    addParticipant: (
+      participant
+    ) =>
       set((state) => {
-        const exists = state.participants.some(
-          (existingParticipant) =>
-            existingParticipant.userId ===
-            participant.userId
-        );
+        const exists =
+          state.participants.some(
+            (existingParticipant) =>
+              existingParticipant.id ===
+              participant.id
+          );
 
         if (exists) {
           return state;
@@ -107,16 +123,28 @@ export const useMeetingStore =
         };
       }),
 
-    removeParticipant: (userId) =>
+    removeParticipant: (
+      participantId
+    ) =>
       set((state) => ({
         participants:
           state.participants.filter(
             (participant) =>
-              participant.userId !== userId
+              participant.id !==
+              participantId
           )
       })),
 
-    addMessage: (message) =>
+    setMessages: (
+      messages
+    ) =>
+      set({
+        messages
+      }),
+
+    addMessage: (
+      message
+    ) =>
       set((state) => ({
         messages: [
           ...state.messages,
@@ -129,12 +157,16 @@ export const useMeetingStore =
         messages: []
       }),
 
-    setMuted: (isMuted) =>
+    setMuted: (
+      isMuted
+    ) =>
       set({
         isMuted
       }),
 
-    setVideoOn: (isVideoOn) =>
+    setVideoOn: (
+      isVideoOn
+    ) =>
       set({
         isVideoOn
       }),
