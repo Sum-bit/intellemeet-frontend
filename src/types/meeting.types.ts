@@ -1,3 +1,6 @@
+// File: src/types/meeting.types.ts
+// Place this file in src/types/
+
 export type MeetingStatus =
   | "waiting"
   | "active"
@@ -17,10 +20,9 @@ export interface MeetingHost {
 }
 
 export interface MeetingParticipant {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string | null;
+  userId: string;
+  userName: string;
+  socketId: string;
 }
 
 export interface Meeting {

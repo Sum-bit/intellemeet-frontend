@@ -1,4 +1,5 @@
 // File: src/store/meetingStore.ts
+// Place this file in src/store/
 
 import { create } from "zustand";
 
@@ -37,7 +38,7 @@ interface MeetingState {
   ) => void;
 
   removeParticipant: (
-    participantId: string
+    socketId: string
   ) => void;
 
   setMessages: (
@@ -106,9 +107,11 @@ export const useMeetingStore =
       set((state) => {
         const exists =
           state.participants.some(
-            (existingParticipant) =>
-              existingParticipant.id ===
-              participant.id
+            (
+              existingParticipant
+            ) =>
+              existingParticipant.socketId ===
+              participant.socketId
           );
 
         if (exists) {
@@ -124,14 +127,14 @@ export const useMeetingStore =
       }),
 
     removeParticipant: (
-      participantId
+      socketId
     ) =>
       set((state) => ({
         participants:
           state.participants.filter(
             (participant) =>
-              participant.id !==
-              participantId
+              participant.socketId !==
+              socketId
           )
       })),
 

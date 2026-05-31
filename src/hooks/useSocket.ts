@@ -58,7 +58,6 @@ interface WebRTCOfferPayload {
   meetingId: string;
   offer: RTCSessionDescriptionInit;
   fromId: string;
-  toId: string;
 }
 
 interface WebRTCAnswerPayload {
